@@ -1,18 +1,35 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
-export const useVoiceRecording = () => {
+interface VoiceRecordingHook {
+  isRecording: boolean;
+  startRecording: () => Promise<void>;
+  stopRecording: () => void;
+  getAudioBlob: () => Promise<Blob | null>;
+}
+
+export const useVoiceRecording = (): VoiceRecordingHook => {
   const [isRecording, setIsRecording] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null);
-  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
 
   const startRecording = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
-      
-      recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) {
-          setAudioChunks((chunks) => [...chunks, e.data]);
+      chunksRef.current = [];
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+        }
+      });
+
+      const recorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm',
+      });
+
+      recorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunksRef.current.push(event.data);
         }
       };
 
@@ -20,34 +37,31 @@ export const useVoiceRecording = () => {
         stream.getTracks().forEach(track => track.stop());
       };
 
-      recorder.start();
-      setMediaRecorder(recorder);
+      mediaRecorderRef.current = recorder;
+      recorder.start(100); // Collect data every 100ms for more granular recording
       setIsRecording(true);
-
-      // Auto-stop after 3 seconds of silence
-      setTimeout(() => {
-        if (recorder.state === 'recording') {
-          recorder.stop();
-          setIsRecording(false);
-        }
-      }, 3000);
-    } catch (err) {
-      console.error('Error accessing microphone:', err);
+    } catch (error) {
+      console.error('Failed to start recording:', error);
+      throw new Error('Could not start recording');
     }
   }, []);
 
   const stopRecording = useCallback(() => {
-    if (mediaRecorder && mediaRecorder.state === 'recording') {
-      mediaRecorder.stop();
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      mediaRecorderRef.current.stop();
       setIsRecording(false);
     }
-  }, [mediaRecorder]);
+  }, []);
 
-  const getAudioBlob = useCallback(() => {
-    const blob = new Blob(audioChunks, { type: 'audio/wav' });
-    setAudioChunks([]);
+  const getAudioBlob = useCallback(async (): Promise<Blob | null> => {
+    if (chunksRef.current.length === 0) return null;
+    
+    // Create blob from chunks
+    const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
+    chunksRef.current = []; // Clear chunks after getting blob
+    
     return blob;
-  }, [audioChunks]);
+  }, []);
 
   return {
     isRecording,
@@ -55,4 +69,4 @@ export const useVoiceRecording = () => {
     stopRecording,
     getAudioBlob,
   };
-}
+};

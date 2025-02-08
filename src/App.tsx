@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { ChatMessage } from './components/ChatMessage';
 import { ChatInput } from './components/ChatInput';
 import { useVoiceRecording } from './hooks/useVoiceRecording';
@@ -59,7 +59,7 @@ function App() {
   };
 
   const handleVoiceMessage = async () => {
-    const audioBlob = getAudioBlob();
+    const audioBlob = await getAudioBlob();
     if (audioBlob) {
       try {
         const response = await sendVoiceMessage(audioBlob);

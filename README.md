@@ -2,7 +2,6 @@
 
 A modern, real-time chat application with voice capabilities powered by React and FastAPI. This application combines text and voice interactions with AI responses using Google's Gemini model.
 
-
 ## ✨ Features
 
 - 💬 Real-time text chat interface
@@ -15,6 +14,7 @@ A modern, real-time chat application with voice capabilities powered by React an
 ## 🚀 Tech Stack
 
 ### Frontend
+
 - React 18
 - TypeScript
 - Tailwind CSS
@@ -23,6 +23,7 @@ A modern, real-time chat application with voice capabilities powered by React an
 - Lucide Icons
 
 ### Backend
+
 - FastAPI
 - Python 3.8+
 - Google Generative AI
@@ -32,25 +33,30 @@ A modern, real-time chat application with voice capabilities powered by React an
 ## 📋 Prerequisites
 
 Before you begin, ensure you have the following installed:
+
 - Node.js (v18 or higher)
 - Python (3.8 or higher)
 - pip (Python package manager)
 - Google Cloud API key for Gemini
+- ffmpeg for audio conversion
 
 ## 🛠️ Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/yourusername/evolvify-chat.git
    cd evolvify-chat
    ```
 
 2. **Install Frontend Dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Install Backend Dependencies**
+
    ```bash
    pip install -r requirements.txt
    ```
@@ -64,10 +70,12 @@ Before you begin, ensure you have the following installed:
 ## 🚀 Running the Application
 
 1. **Start the Backend Server**
+
    ```bash
    cd src
    python main.py
    ```
+
    The backend will start on `http://localhost:8000`
 
 2. **Start the Frontend Development Server**
@@ -79,6 +87,7 @@ Before you begin, ensure you have the following installed:
 ## 🎯 Usage
 
 1. **Text Chat**
+
    - Type your message in the input field
    - Press Enter or click the Send button
    - Receive AI-powered responses
@@ -103,4 +112,3 @@ evolvify-chat/
 ├── public/              # Static assets
 └── package.json        # Project dependencies
 ```
-

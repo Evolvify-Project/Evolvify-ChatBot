@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api';  // Updated API URL to include /api prefix
+const API_URL = 'http://localhost:8000/api';
 
 export const sendMessage = async (message: string) => {
   try {
@@ -12,19 +12,37 @@ export const sendMessage = async (message: string) => {
   }
 };
 
-export const sendVoiceMessage = async (audioBlob: Blob) => {
+export const sendVoiceMessage = async (audioBlob: Blob): Promise<{ transcription: string; audioUrl?: string }> => {
   try {
+    // Convert blob to File object with proper mime type
+    const file = new File([audioBlob], 'voice-message.webm', { type: 'audio/webm' });
     const formData = new FormData();
-    formData.append('audio', audioBlob);
+    formData.append('audio', file);
     
     const response = await axios.post(`${API_URL}/speech-to-text`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      responseType: 'json',
     });
+
     return response.data;
   } catch (error) {
     console.error('Error sending voice message:', error);
+    throw error;
+  }
+};
+
+export const textToSpeech = async (text: string): Promise<Blob> => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/text-to-speech`,
+      { text },
+      { responseType: 'blob' }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error converting text to speech:', error);
     throw error;
   }
 };
