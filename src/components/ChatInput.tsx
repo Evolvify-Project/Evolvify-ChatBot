@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Mic, Send, Square } from 'lucide-react';
+import { Mic, Send } from 'lucide-react';
 
 interface ChatInputProps {
   onSendMessage: (message: string, isVoice?: boolean) => void;
@@ -25,43 +25,36 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit(e);
-    }
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="flex items-center gap-2 p-4 border-t bg-white">
-      <input
-        ref={inputRef}
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        onKeyPress={handleKeyPress}
-        placeholder="Type your message..."
-        className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        disabled={isRecording}
-      />
-      <button
-        type="button"
-        onClick={isRecording ? onStopRecording : onStartRecording}
-        className={`p-2 rounded-full transition-colors ${
-          isRecording 
-            ? 'bg-red-100 text-red-600 hover:bg-red-200' 
-            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-        }`}
-      >
-        {isRecording ? <Square size={20} /> : <Mic size={20} />}
-      </button>
+    <form onSubmit={handleSubmit} className="flex items-center gap-2">
+      <div className="flex-1 relative">
+        <input
+          ref={inputRef}
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Ask Anything..."
+          className="w-full px-4 py-3 rounded-full border border-gray-200 focus:outline-none focus:border-blue-400"
+          disabled={isRecording}
+        />
+        <button
+          type="button"
+          onClick={isRecording ? onStopRecording : onStartRecording}
+          className="absolute right-2 top-1/2 transform -translate-y-1/2"
+        >
+          <Mic 
+            size={20} 
+            className={isRecording ? 'text-red-500' : 'text-gray-400'}
+          />
+        </button>
+      </div>
       <button
         type="submit"
         disabled={!message.trim() || isRecording}
-        className="p-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="p-3 rounded-full bg-blue-400 text-white hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <Send size={20} />
       </button>
     </form>
   );
-}
+};
