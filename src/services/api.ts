@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000/api';
+const API_URL = 'https://moodydev-evolva.hf.space/api';
 
 export const sendMessage = async (message: string) => {
   try {
