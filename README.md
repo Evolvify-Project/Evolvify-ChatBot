@@ -98,6 +98,74 @@ Before you begin, ensure you have the following installed:
    - Click the stop button to send
    - Receive both text and audio responses
 
+## 📚 API Documentation
+
+### Chat Endpoints
+
+#### Send Text Message
+```http
+POST /api/chat
+Content-Type: application/json
+
+{
+  "message": "Your message here"
+}
+```
+
+**Response**
+```json
+{
+  "message": "AI response text"
+}
+```
+
+### Speech Endpoints
+
+#### Speech to Text
+```http
+POST /api/speech-to-text
+Content-Type: multipart/form-data
+
+Form Data:
+- audio: <audio_file>
+```
+
+**Response**
+```json
+{
+  "transcription": "Transcribed text from audio"
+}
+```
+
+#### Text to Speech
+```http
+POST /api/text-to-speech
+Content-Type: application/json
+
+{
+  "text": "Text to convert to speech"
+}
+```
+
+**Response**
+- Content-Type: audio/mpeg
+- File: speech.mp3
+
+### Error Responses
+
+All endpoints may return the following error response:
+
+```json
+{
+  "detail": "Error message description"
+}
+```
+
+Status codes:
+- 200: Success
+- 400: Bad Request
+- 500: Internal Server Error
+
 ## 🔧 Project Structure
 
 ```
